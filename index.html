@@ -2,288 +2,289 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Рахунок-фактура | ФОП</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<title>underground.signal : off-grid</title>
 
 <style>
-* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-
-body {
-    margin: 0;
-    background: #0a0a0a;
-    color: #e6e6e6;
-    font-size: 14px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-/* ================= HEADER ================= */
-header {
-    background: #000;
-    border-bottom: 1px solid #222;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #9fe7ff;
+  font-family: "Courier New", monospace;
+  overflow: hidden;
 }
-
-header h1 { font-size: 15px; margin: 0; font-weight: 600; }
-
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.wrapper {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+  padding: 20px;
+}
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
 button {
-    background: #111;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 1px solid #4dd2ff;
+  background: transparent;
+  color: #4dd2ff;
+  font-size: 26px;
+  cursor: pointer;
+  transition: .3s;
 }
-
-button:hover { background: #1a1a1a; }
-
-/* ================= LAYOUT ================= */
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 50px);
+button:hover {
+  background: rgba(77,210,255,.15);
+  box-shadow: 0 0 22px rgba(77,210,255,.6);
 }
-
-/* ================= FORM PANEL ================= */
-.form-panel {
-    padding: 20px;
-    border-right: 1px solid #222;
-    overflow-y: auto;
+.volume {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
-
-.form-panel h2 { font-size: 14px; margin-bottom: 10px; }
-
-fieldset { border: 1px solid #222; padding: 12px; margin-bottom: 12px; }
-legend { font-size: 12px; padding: 0 6px; color: #aaa; }
-
-.form-group { margin-bottom: 8px; }
-.form-row { display: flex; gap: 8px; }
-label { display: block; font-size: 11px; color: #aaa; margin-bottom: 3px; }
-input, select {
-    width: 100%;
-    padding: 5px 6px;
-    font-size: 13px;
-    background: #000;
-    border: 1px solid #333;
-    color: #fff;
+.volume label {
+  font-size: 10px;
+  opacity: 0.6;
 }
-
-/* ================= ITEMS TABLE ================= */
-.items-table {
-    width: 100%;
-    border-collapse: collapse;
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 120px;
+  height: 2px;
+  background: #4dd2ff;
+  outline: none;
+  opacity: 0.7;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4dd2ff;
+  cursor: pointer;
+}
+.text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+.main-text {
+  font-size: 16px;
+  letter-spacing: 1.2px;
+}
+.sub-text {
+  font-size: 13px;
+  letter-spacing: 2px;
+  opacity: 0.9;
+}
+.footer-text {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.45;
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.link {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  opacity: 0.7;
+}
+.link a {
+  color: #4dd2ff;
+  text-decoration: none;
+  border-bottom: 1px dotted #4dd2ff;
+  transition: 0.3s;
+}
+.link a:hover {
+  opacity: 0.8;
+  border-bottom: 1px solid #4dd2ff;
+}
+.sub-link {
+  margin-top: 4px;
+}
+@media (max-width: 600px) {
+  button {
+    width: 68px;
+    height: 68px;
+    font-size: 24px;
+  }
+  .main-text {
+    font-size: 14px;
+  }
+  .sub-text {
     font-size: 12px;
-    margin-bottom: 10px;
-}
-
-.items-table th, .items-table td { border: 1px solid #222; padding: 5px; text-align: left; }
-.items-table th { background: #111; font-weight: normal; }
-.item-total { text-align: right; }
-.btn-remove { background: none; border: none; color: #888; cursor: pointer; font-size: 14px; }
-
-/* ================= PREVIEW PANEL ================= */
-.preview-panel {
-    padding: 20px;
-    background: #050505;
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-}
-
-.invoice {
-    background: #fff;
-    color: #000;
-    width: 210mm;
-    min-height: 297mm;
-    padding: 25mm; 
-    font-size: 12px;
-    transform: scale(0.65); /* зменшений масштаб */
-    transform-origin: top center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-
-/* ================= PRINT ================= */
-@media print {
-    body { background: #fff; color: #000; }
-    header, .form-panel { display: none; }
-    .invoice { transform: scale(1); width: 210mm; min-height: 297mm; padding: 20mm; }
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; }
-    .invoice { transform: scale(0.55); }
+  }
+  .links {
+    gap: 12px;
+  }
 }
 </style>
 </head>
 
 <body>
+<canvas id="stars"></canvas>
 
-<header>
-<h1>lavanda audit soft_1</h1>
-<button onclick="window.print()">PDF / Друк</button>
-</header>
+<div class="wrapper">
+  <div class="player">
+    <div class="controls">
+      <button id="play">▶</button>
+      <div class="volume">
+        <label>volume</label>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="0.7">
+      </div>
+    </div>
+    <div class="text-block">
+      <div class="main-text">radio_underground.signal:off-grid.не для всіх.</div>
+      <div class="sub-text">24'7</div>
+      <div class="footer-text">ibonarium project 2026 by lavanda audit</div>
+    </div>
+  </div>
 
-<main class="container">
+  <div class="links">
+    <div class="link">
+      <a href="https://lavandaaudit.github.io/sun-ibonarium-cosmo-dynamics-lab-live/" target="_blank" rel="noopener">
+        sun.ibonarium
+      </a>
+      <div class="sub-link">
+        <a href="https://lavandaaudit.github.io/ibonarium.ecology.radar/" target="_blank" rel="noopener">
+          ecology radar
+        </a>
+      </div>
+    </div>
 
-<!-- ================= FORM ================= -->
-<section class="form-panel">
-<h2>Реквізити</h2>
+    <div class="link">
+      <a href="https://lavandaaudit.github.io/ibonarium.planet.radar/" target="_blank" rel="noopener">
+        planet.radar
+      </a>
+      <div class="sub-link">
+        <a href="https://lavandaaudit.github.io/ibonariumeconomy/" target="_blank" rel="noopener">
+          economy.lab
+        </a>
+      </div>
+    </div>
 
-<fieldset>
-<legend>Постачальник (ФОП)</legend>
-<div class="form-group"><label>Повна назва</label><input id="supplier-name" value="ФОП "></div>
-<div class="form-row">
-<div class="form-group"><label>ІПН</label><input id="supplier-inn" value="30223в44"></div>
-<div class="form-group"><label>Телефон</label><input id="supplier-phone" value="+38050111112"></div>
+    <div class="link">
+      <a href="https://lavandaaudit.github.io/cosmo.dynamics/" target="_blank" rel="noopener">
+        moon.ibonarium
+      </a>
+    </div>
+
+    <!-- ===== SOCIAL.LIVE BUTTON ПІД moon.ibonarium ===== -->
+    <div class="link">
+      <a href="#" onclick="openSocialLive()" rel="noopener">social.live</a>
+    </div>
+  </div>
 </div>
-<div class="form-group"><label>IBAN</label><input id="supplier-iban" value="UA"></div>
-<div class="form-row">
-<div class="form-group"><label>Банк</label><input id="supplier-bank" value="АТ КБ »"></div>
-<div class="form-group"><label>МФО</label><input id="supplier-mfo" value="305299"></div>
-</div>
-<div class="form-group"><label>Система оподаткування</label><input id="supplier-tax" value="Єдиний податок, 2 група, без ПДВ"></div>
-</fieldset>
 
-<fieldset>
-<legend>Покупець</legend>
-<div class="form-group"><label>Назва / ПІБ</label><input id="customer-name" value="ФОП "></div>
-<div class="form-group"><label>Адреса</label><input id="customer-address" value="03028, м. Київ, вул. Саперно-Слобідська, 10"></div>
-<div class="form-group"><label>ІПН / ЄДРПОУ</label><input id="customer-inn" value="2730414877"></div>
-</fieldset>
-
-<fieldset>
-<legend>Товари / Послуги</legend>
-<table class="items-table" id="items-table">
-<thead>
-<tr><th>№</th><th>Назва</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th><th></th></tr>
-</thead>
-<tbody id="items-body">
-<tr>
-<td>1</td>
-<td><input class="item-name" value="Прапор 1,5×1 м"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="3" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="540" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">1620</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
-</tr>
-<tr>
-<td>2</td>
-<td><input class="item-name" value="Прапор 1,2×0,8 м"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="27" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="405" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">10935</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
-</tr>
-</tbody>
-</table>
-<button onclick="addRow()">+ Додати рядок</button>
-</fieldset>
-</section>
-
-<!-- ================= PREVIEW ================= -->
-<section class="preview-panel">
-<div class="invoice" id="invoice-preview">
-
-<h3 style="text-align:center;margin-bottom:10px;">РАХУНОК-ФАКТУРА</h3>
-
-<p id="preview-supplier"></p>
-<p id="preview-customer"></p>
-
-<table id="preview-items" style="width:100%; border-collapse: collapse;" border="1">
-<tr>
-<th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th>
-</tr>
-</table>
-
-<p style="text-align:right;margin-top:10px;"><b id="preview-total">Разом до сплати: 0 грн</b></p>
-<p style="margin-top:30px;">Оплату прошу здійснити шляхом безготівкового перерахування коштів на рахунок ФОП.</p>
-<p style="margin-top:40px;">_____________________ / ФОП ФЕДЧУК С.С.</p>
-
-</div>
-</section>
-
-</main>
+<audio id="audio" crossorigin="anonymous" preload="none">
+  <source src="https://ice1.somafm.com/dronezone-128-mp3">
+</audio>
 
 <script>
-function updatePreview() {
-    // Постачальник
-    const supplier = `
-<b>Постачальник:</b><br>
-${document.getElementById('supplier-name').value}<br>
-ІПН: ${document.getElementById('supplier-inn').value}<br>
-IBAN: ${document.getElementById('supplier-iban').value}<br>
-Банк: ${document.getElementById('supplier-bank').value}, МФО: ${document.getElementById('supplier-mfo').value}<br>
-Система оподаткування: ${document.getElementById('supplier-tax').value}
-`;
-    document.getElementById('preview-supplier').innerHTML = supplier;
+// ================= AUDIO =================
+delete navigator.sendBeacon;
+if (navigator.connection) navigator.connection.saveData = true;
 
-    // Покупець
-    const customer = `
-<b>Покупець:</b><br>
-${document.getElementById('customer-name').value}<br>
-ІПН: ${document.getElementById('customer-inn').value}<br>
-Адреса: ${document.getElementById('customer-address').value}
-`;
-    document.getElementById('preview-customer').innerHTML = customer;
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const volume = document.getElementById("volume");
+let playing = false;
 
-    // Товари
-    const tbody = document.getElementById('preview-items');
-    tbody.innerHTML = '<tr><th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr>';
+volume.oninput = () => audio.volume = volume.value;
 
-    let total = 0;
-    const names = document.querySelectorAll('.item-name');
-    const units = document.querySelectorAll('.item-unit');
-    const qtys = document.querySelectorAll('.item-qty');
-    const prices = document.querySelectorAll('.item-price');
+playBtn.onclick = () => {
+  if (!playing) {
+    audio.volume = volume.value;
+    audio.play();
+    playBtn.textContent = "■";
+    playing = true;
+    fullscreen();
+  } else {
+    audio.pause();
+    playBtn.textContent = "▶";
+    playing = false;
+  }
+};
 
-    names.forEach((n,i)=>{
-        const sum = Number(qtys[i].value)*Number(prices[i].value);
-        total += sum;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${i+1}</td>
-                        <td>${n.value}</td>
-                        <td>${units[i].value}</td>
-                        <td>${qtys[i].value}</td>
-                        <td>${prices[i].value}</td>
-                        <td>${sum.toFixed(2)}</td>`;
-        tbody.appendChild(tr);
-    });
-
-    document.getElementById('preview-total').innerHTML = `<b>Разом до сплати: ${total.toFixed(2)} грн</b>`;
+function fullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
 }
 
-function addRow() {
-    const tbody = document.getElementById('items-body');
-    const index = tbody.rows.length + 1;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${index}</td>
-<td><input class="item-name" value="Нова позиція"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="1" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="0" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">0</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>`;
-    tbody.appendChild(tr);
-    updatePreview();
+// ================= STARS =================
+const s = document.getElementById("stars");
+const ctx = s.getContext("2d");
+let W, H, stars = [];
+
+function resize() {
+  W = s.width = innerWidth;
+  H = s.height = innerHeight;
+  stars = Array.from({length: 160}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    z: Math.random() * W
+  }));
 }
+resize();
+addEventListener("resize", resize);
 
-function removeRow(btn) {
-    btn.closest('tr').remove();
-    updatePreview();
+function draw() {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = "#4dd2ff";
+  stars.forEach(st => {
+    st.z -= 0.2;
+    if (st.z <= 0) st.z = W;
+    const k = 128 / st.z;
+    const x = (st.x - W/2) * k + W/2;
+    const y = (st.y - H/2) * k + H/2;
+    if (x > 0 && x < W && y > 0 && y < H) {
+      const size = (1 - st.z / W) * 2;
+      ctx.fillRect(x, y, size, size);
+    }
+  });
+  requestAnimationFrame(draw);
 }
+draw();
 
-function updateTotals() { updatePreview(); }
-
-document.querySelectorAll('input').forEach(input=>{
-    input.addEventListener('input', updatePreview);
-});
-
-updatePreview();
+// ================= SOCIAL.LIVE =================
+function openSocialLive() {
+  window.open("https://lavandaaudit.github.io/lavanda.soft/", "_blank");
+}
 </script>
-
 </body>
 </html>
