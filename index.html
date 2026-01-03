@@ -25,11 +25,7 @@ header {
     align-items: center;
 }
 
-header h1 {
-    font-size: 15px;
-    margin: 0;
-    font-weight: 600;
-}
+header h1 { font-size: 15px; margin: 0; font-weight: 600; }
 
 button {
     background: #111;
@@ -56,33 +52,14 @@ button:hover { background: #1a1a1a; }
     overflow-y: auto;
 }
 
-.form-panel h2 {
-    font-size: 14px;
-    margin-bottom: 10px;
-}
+.form-panel h2 { font-size: 14px; margin-bottom: 10px; }
 
-fieldset {
-    border: 1px solid #222;
-    padding: 12px;
-    margin-bottom: 12px;
-}
-
-legend {
-    font-size: 12px;
-    padding: 0 6px;
-    color: #aaa;
-}
+fieldset { border: 1px solid #222; padding: 12px; margin-bottom: 12px; }
+legend { font-size: 12px; padding: 0 6px; color: #aaa; }
 
 .form-group { margin-bottom: 8px; }
 .form-row { display: flex; gap: 8px; }
-
-label {
-    display: block;
-    font-size: 11px;
-    color: #aaa;
-    margin-bottom: 3px;
-}
-
+label { display: block; font-size: 11px; color: #aaa; margin-bottom: 3px; }
 input, select {
     width: 100%;
     padding: 5px 6px;
@@ -100,29 +77,18 @@ input, select {
     margin-bottom: 10px;
 }
 
-.items-table th, .items-table td {
-    border: 1px solid #222;
-    padding: 5px;
-    text-align: left;
-}
-
-.items-table th {
-    background: #111;
-    font-weight: normal;
-}
-
+.items-table th, .items-table td { border: 1px solid #222; padding: 5px; text-align: left; }
+.items-table th { background: #111; font-weight: normal; }
 .item-total { text-align: right; }
-
 .btn-remove { background: none; border: none; color: #888; cursor: pointer; font-size: 14px; }
-
-/* ================= ACTIONS ================= */
-.actions { display: flex; gap: 10px; margin-top: 10px; }
 
 /* ================= PREVIEW PANEL ================= */
 .preview-panel {
     padding: 20px;
     background: #050505;
     overflow: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .invoice {
@@ -130,10 +96,11 @@ input, select {
     color: #000;
     width: 210mm;
     min-height: 297mm;
-    padding: 25mm; /* збільшені відступи */
+    padding: 25mm; 
     font-size: 12px;
-    transform: scale(0.8); /* зменшений масштаб */
-    transform-origin: top left;
+    transform: scale(0.65); /* зменшений масштаб */
+    transform-origin: top center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
 }
 
 /* ================= PRINT ================= */
@@ -146,7 +113,7 @@ input, select {
 /* ================= MOBILE ================= */
 @media (max-width: 900px) {
     .container { grid-template-columns: 1fr; }
-    .invoice { transform: scale(0.75); }
+    .invoice { transform: scale(0.55); }
 }
 </style>
 </head>
@@ -166,14 +133,14 @@ input, select {
 
 <fieldset>
 <legend>Постачальник (ФОП)</legend>
-<div class="form-group"><label>Повна назва</label><input id="supplier-name" value="ФОП ФЕДЧУК Сергій Сергійович"></div>
+<div class="form-group"><label>Повна назва</label><input id="supplier-name" value="ФОП "></div>
 <div class="form-row">
-<div class="form-group"><label>ІПН</label><input id="supplier-inn" value="3055513615"></div>
-<div class="form-group"><label>Телефон</label><input id="supplier-phone" value="+380509991292"></div>
+<div class="form-group"><label>ІПН</label><input id="supplier-inn" value="30223в44"></div>
+<div class="form-group"><label>Телефон</label><input id="supplier-phone" value="+38050111112"></div>
 </div>
-<div class="form-group"><label>IBAN</label><input id="supplier-iban" value="UA703052990000026006020142730"></div>
+<div class="form-group"><label>IBAN</label><input id="supplier-iban" value="UA"></div>
 <div class="form-row">
-<div class="form-group"><label>Банк</label><input id="supplier-bank" value="АТ КБ «ПриватБанк»"></div>
+<div class="form-group"><label>Банк</label><input id="supplier-bank" value="АТ КБ »"></div>
 <div class="form-group"><label>МФО</label><input id="supplier-mfo" value="305299"></div>
 </div>
 <div class="form-group"><label>Система оподаткування</label><input id="supplier-tax" value="Єдиний податок, 2 група, без ПДВ"></div>
@@ -181,7 +148,7 @@ input, select {
 
 <fieldset>
 <legend>Покупець</legend>
-<div class="form-group"><label>Назва / ПІБ</label><input id="customer-name" value="ФОП Гординський Олександр Миколайович"></div>
+<div class="form-group"><label>Назва / ПІБ</label><input id="customer-name" value="ФОП "></div>
 <div class="form-group"><label>Адреса</label><input id="customer-address" value="03028, м. Київ, вул. Саперно-Слобідська, 10"></div>
 <div class="form-group"><label>ІПН / ЄДРПОУ</label><input id="customer-inn" value="2730414877"></div>
 </fieldset>
@@ -311,7 +278,6 @@ function removeRow(btn) {
 
 function updateTotals() { updatePreview(); }
 
-// Авто-оновлення
 document.querySelectorAll('input').forEach(input=>{
     input.addEventListener('input', updatePreview);
 });
