@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рахунок-фактура | ФОП</title>
+
+<style>
+/* ================= RESET ================= */
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #0a0a0a;
+    color: #e6e6e6;
+    font-size: 14px;
+}
+
+/* ================= HEADER ================= */
+header {
+    background: #000;
+    border-bottom: 1px solid #222;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* ================= BUTTONS ================= */
+button {
+    background: #111;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1a1a1a;
+}
+
+/* ================= LAYOUT ================= */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 50px);
+}
+
+/* ================= FORM ================= */
+.form-panel {
+    padding: 14px;
+    border-right: 1px solid #222;
+}
+
+.form-panel h2 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+fieldset {
+    border: 1px solid #222;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+legend {
+    font-size: 12px;
+    padding: 0 6px;
+    color: #aaa;
+}
+
+.form-group {
+    margin-bottom: 8px;
+}
+
+.form-row {
+    display: flex;
+    gap: 8px;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 3px;
+}
+
+input, select {
+    width: 100%;
+    padding: 5px 6px;
+    font-size: 13px;
+    background: #000;
+    border: 1px solid #333;
+    color: #fff;
+}
+
+/* ================= TABLE ================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+th, td {
+    border: 1px solid #222;
+    padding: 5px;
+}
+
+th {
+    background: #111;
+    font-weight: normal;
+}
+
+/* ================= ACTIONS ================= */
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ================= PREVIEW ================= */
+.preview-panel {
+    padding: 14px;
+    background: #050505;
+    overflow: auto;
+}
+
+.invoice {
+    background: #fff;
+    color: #000;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    font-size: 12px;
+    transform: scale(0.9);
+    transform-origin: top left;
+}
+
+/* ================= PRINT ================= */
+@media print {
+    body {
+        background: #fff;
+    }
+    header, .form-panel {
+        display: none;
+    }
+    .invoice {
+        transform: scale(1);
+        width: 210mm;
+        min-height: 297mm;
+    }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    .invoice {
+        transform: scale(0.85);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Рахунок-фактура (ФОП)</h1>
+<button onclick="window.print()">PDF / Друк</button>
+</header>
+
+<main class="container">
+
+<!-- ================= FORM ================= -->
+<section class="form-panel">
+<h2>Реквізити</h2>
+
+<fieldset>
+<legend>Постачальник (ФОП)</legend>
+
+<div class="form-group">
+<label>Повна назва</label>
+<input value="Фізична особа–підприємець ФЕДЧУК Сергій Сергійович">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>ІПН / РНОКПП</label>
+<input value="3055513615">
+</div>
+<div class="form-group">
+<label>Телефон</label>
+<input value="+380509991292">
+</div>
+</div>
+
+<div class="form-group">
+<label>IBAN</label>
+<input value="UA703052990000026006020142730">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label>Банк</label>
+<input value="АТ КБ «ПриватБанк»">
+</div>
+<div class="form-group">
+<label>МФО</label>
+<input value="305299">
+</div>
+</div>
+
+<div class="form-group">
+<label>Система оподаткування</label>
+<input value="Єдиний податок, 2 група, без ПДВ">
+</div>
+</fieldset>
+
+<fieldset>
+<legend>Покупець</legend>
+<div class="form-group">
+<label>Назва / ПІБ</label>
+<input value="ФОП Гординський Олександр Миколайович">
+</div>
+<div class="form-group">
+<label>Адреса</label>
+<input value="03028, м. Київ, вул. Саперно-Слобідська, 10">
+</div>
+<div class="form-group">
+<label>ІПН / ЄДРПОУ</label>
+<input value="2730414877">
+</div>
+</fieldset>
+
+</section>
+
+<!-- ================= PREVIEW ================= -->
+<section class="preview-panel">
+
+<div class="invoice">
+
+<h3 style="text-align:center;margin-bottom:10px;">РАХУНОК-ФАКТУРА</h3>
+
+<p>
+<b>Постачальник:</b><br>
+ФОП ФЕДЧУК Сергій Сергійович<br>
+ІПН: 3055513615<br>
+IBAN: UA703052990000026006020142730<br>
+Банк: АТ КБ «ПриватБанк», МФО 305299<br>
+Система оподаткування: Єдиний податок, 2 група, без ПДВ
+</p>
+
+<p>
+<b>Покупець:</b><br>
+ФОП Гординський Олександр Миколайович<br>
+ІПН: 2730414877<br>
+Адреса: м. Київ
+</p>
+
+<table>
+<tr>
+<th>№</th>
+<th>Найменування</th>
+<th>Од.</th>
+<th>К-сть</th>
+<th>Ціна</th>
+<th>Сума</th>
+</tr>
+<tr>
+<td>1</td>
+<td>Прапор 1,5×1 м</td>
+<td>шт</td>
+<td>3</td>
+<td>540,00</td>
+<td>1 620,00</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Прапор 1,2×0,8 м</td>
+<td>шт</td>
+<td>27</td>
+<td>405,00</td>
+<td>10 935,00</td>
+</tr>
+</table>
+
+<p style="text-align:right;margin-top:10px;">
+<b>Разом до сплати: 12 555,00 грн</b>
+</p>
+
+<p style="margin-top:30px;">
+Оплату прошу здійснити шляхом безготівкового перерахування коштів на рахунок ФОП.
+</p>
+
+<p style="margin-top:40px;">
+_____________________ / ФОП ФЕДЧУК С.С.
+</p>
+
+</div>
+</section>
+
+</main>
+
+</body>
+</html>
