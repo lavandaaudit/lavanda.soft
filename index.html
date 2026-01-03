@@ -6,11 +6,7 @@
 <title>Рахунок-фактура | ФОП</title>
 
 <style>
-/* ================= RESET ================= */
-* {
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-}
+* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
 
 body {
     margin: 0;
@@ -35,7 +31,6 @@ header h1 {
     font-weight: 600;
 }
 
-/* ================= BUTTONS ================= */
 button {
     background: #111;
     color: #fff;
@@ -45,9 +40,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background: #1a1a1a;
-}
+button:hover { background: #1a1a1a; }
 
 /* ================= LAYOUT ================= */
 .container {
@@ -56,10 +49,11 @@ button:hover {
     min-height: calc(100vh - 50px);
 }
 
-/* ================= FORM ================= */
+/* ================= FORM PANEL ================= */
 .form-panel {
-    padding: 14px;
+    padding: 20px;
     border-right: 1px solid #222;
+    overflow-y: auto;
 }
 
 .form-panel h2 {
@@ -69,7 +63,7 @@ button:hover {
 
 fieldset {
     border: 1px solid #222;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 12px;
 }
 
@@ -79,14 +73,8 @@ legend {
     color: #aaa;
 }
 
-.form-group {
-    margin-bottom: 8px;
-}
-
-.form-row {
-    display: flex;
-    gap: 8px;
-}
+.form-group { margin-bottom: 8px; }
+.form-row { display: flex; gap: 8px; }
 
 label {
     display: block;
@@ -104,33 +92,35 @@ input, select {
     color: #fff;
 }
 
-/* ================= TABLE ================= */
-table {
+/* ================= ITEMS TABLE ================= */
+.items-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 12px;
+    margin-bottom: 10px;
 }
 
-th, td {
+.items-table th, .items-table td {
     border: 1px solid #222;
     padding: 5px;
+    text-align: left;
 }
 
-th {
+.items-table th {
     background: #111;
     font-weight: normal;
 }
 
-/* ================= ACTIONS ================= */
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
+.item-total { text-align: right; }
 
-/* ================= PREVIEW ================= */
+.btn-remove { background: none; border: none; color: #888; cursor: pointer; font-size: 14px; }
+
+/* ================= ACTIONS ================= */
+.actions { display: flex; gap: 10px; margin-top: 10px; }
+
+/* ================= PREVIEW PANEL ================= */
 .preview-panel {
-    padding: 14px;
+    padding: 20px;
     background: #050505;
     overflow: auto;
 }
@@ -140,35 +130,23 @@ th {
     color: #000;
     width: 210mm;
     min-height: 297mm;
-    padding: 20mm;
+    padding: 25mm; /* збільшені відступи */
     font-size: 12px;
-    transform: scale(0.9);
+    transform: scale(0.8); /* зменшений масштаб */
     transform-origin: top left;
 }
 
 /* ================= PRINT ================= */
 @media print {
-    body {
-        background: #fff;
-    }
-    header, .form-panel {
-        display: none;
-    }
-    .invoice {
-        transform: scale(1);
-        width: 210mm;
-        min-height: 297mm;
-    }
+    body { background: #fff; color: #000; }
+    header, .form-panel { display: none; }
+    .invoice { transform: scale(1); width: 210mm; min-height: 297mm; padding: 20mm; }
 }
 
 /* ================= MOBILE ================= */
 @media (max-width: 900px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-    .invoice {
-        transform: scale(0.85);
-    }
+    .container { grid-template-columns: 1fr; }
+    .invoice { transform: scale(0.75); }
 }
 </style>
 </head>
@@ -176,7 +154,7 @@ th {
 <body>
 
 <header>
-<h1>Рахунок-фактура (ФОП)</h1>
+<h1>Введення даних</h1>
 <button onclick="window.print()">PDF / Друк</button>
 </header>
 
@@ -188,129 +166,158 @@ th {
 
 <fieldset>
 <legend>Постачальник (ФОП)</legend>
-
-<div class="form-group">
-<label>Повна назва</label>
-<input value="Фізична особа–підприємець ФЕДЧУК Сергій Сергійович">
-</div>
-
+<div class="form-group"><label>Повна назва</label><input id="supplier-name" value="ФОП ФЕДЧУК Сергій Сергійович"></div>
 <div class="form-row">
-<div class="form-group">
-<label>ІПН / РНОКПП</label>
-<input value="3055513615">
+<div class="form-group"><label>ІПН</label><input id="supplier-inn" value="3055513615"></div>
+<div class="form-group"><label>Телефон</label><input id="supplier-phone" value="+380509991292"></div>
 </div>
-<div class="form-group">
-<label>Телефон</label>
-<input value="+380509991292">
-</div>
-</div>
-
-<div class="form-group">
-<label>IBAN</label>
-<input value="UA703052990000026006020142730">
-</div>
-
+<div class="form-group"><label>IBAN</label><input id="supplier-iban" value="UA703052990000026006020142730"></div>
 <div class="form-row">
-<div class="form-group">
-<label>Банк</label>
-<input value="АТ КБ «ПриватБанк»">
+<div class="form-group"><label>Банк</label><input id="supplier-bank" value="АТ КБ «ПриватБанк»"></div>
+<div class="form-group"><label>МФО</label><input id="supplier-mfo" value="305299"></div>
 </div>
-<div class="form-group">
-<label>МФО</label>
-<input value="305299">
-</div>
-</div>
-
-<div class="form-group">
-<label>Система оподаткування</label>
-<input value="Єдиний податок, 2 група, без ПДВ">
-</div>
+<div class="form-group"><label>Система оподаткування</label><input id="supplier-tax" value="Єдиний податок, 2 група, без ПДВ"></div>
 </fieldset>
 
 <fieldset>
 <legend>Покупець</legend>
-<div class="form-group">
-<label>Назва / ПІБ</label>
-<input value="ФОП Гординський Олександр Миколайович">
-</div>
-<div class="form-group">
-<label>Адреса</label>
-<input value="03028, м. Київ, вул. Саперно-Слобідська, 10">
-</div>
-<div class="form-group">
-<label>ІПН / ЄДРПОУ</label>
-<input value="2730414877">
-</div>
+<div class="form-group"><label>Назва / ПІБ</label><input id="customer-name" value="ФОП Гординський Олександр Миколайович"></div>
+<div class="form-group"><label>Адреса</label><input id="customer-address" value="03028, м. Київ, вул. Саперно-Слобідська, 10"></div>
+<div class="form-group"><label>ІПН / ЄДРПОУ</label><input id="customer-inn" value="2730414877"></div>
 </fieldset>
 
+<fieldset>
+<legend>Товари / Послуги</legend>
+<table class="items-table" id="items-table">
+<thead>
+<tr><th>№</th><th>Назва</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th><th></th></tr>
+</thead>
+<tbody id="items-body">
+<tr>
+<td>1</td>
+<td><input class="item-name" value="Прапор 1,5×1 м"></td>
+<td><input class="item-unit" value="шт"></td>
+<td><input type="number" class="item-qty" value="3" min="0" step="1" oninput="updateTotals()"></td>
+<td><input type="number" class="item-price" value="540" min="0" step="0.01" oninput="updateTotals()"></td>
+<td class="item-total">1620</td>
+<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
+</tr>
+<tr>
+<td>2</td>
+<td><input class="item-name" value="Прапор 1,2×0,8 м"></td>
+<td><input class="item-unit" value="шт"></td>
+<td><input type="number" class="item-qty" value="27" min="0" step="1" oninput="updateTotals()"></td>
+<td><input type="number" class="item-price" value="405" min="0" step="0.01" oninput="updateTotals()"></td>
+<td class="item-total">10935</td>
+<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
+</tr>
+</tbody>
+</table>
+<button onclick="addRow()">+ Додати рядок</button>
+</fieldset>
 </section>
 
 <!-- ================= PREVIEW ================= -->
 <section class="preview-panel">
-
-<div class="invoice">
+<div class="invoice" id="invoice-preview">
 
 <h3 style="text-align:center;margin-bottom:10px;">РАХУНОК-ФАКТУРА</h3>
 
-<p>
-<b>Постачальник:</b><br>
-ФОП ФЕДЧУК Сергій Сергійович<br>
-ІПН: 3055513615<br>
-IBAN: UA703052990000026006020142730<br>
-Банк: АТ КБ «ПриватБанк», МФО 305299<br>
-Система оподаткування: Єдиний податок, 2 група, без ПДВ
-</p>
+<p id="preview-supplier"></p>
+<p id="preview-customer"></p>
 
-<p>
-<b>Покупець:</b><br>
-ФОП Гординський Олександр Миколайович<br>
-ІПН: 2730414877<br>
-Адреса: м. Київ
-</p>
-
-<table>
+<table id="preview-items" style="width:100%; border-collapse: collapse;" border="1">
 <tr>
-<th>№</th>
-<th>Найменування</th>
-<th>Од.</th>
-<th>К-сть</th>
-<th>Ціна</th>
-<th>Сума</th>
-</tr>
-<tr>
-<td>1</td>
-<td>Прапор 1,5×1 м</td>
-<td>шт</td>
-<td>3</td>
-<td>540,00</td>
-<td>1 620,00</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Прапор 1,2×0,8 м</td>
-<td>шт</td>
-<td>27</td>
-<td>405,00</td>
-<td>10 935,00</td>
+<th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th>
 </tr>
 </table>
 
-<p style="text-align:right;margin-top:10px;">
-<b>Разом до сплати: 12 555,00 грн</b>
-</p>
-
-<p style="margin-top:30px;">
-Оплату прошу здійснити шляхом безготівкового перерахування коштів на рахунок ФОП.
-</p>
-
-<p style="margin-top:40px;">
-_____________________ / ФОП ФЕДЧУК С.С.
-</p>
+<p style="text-align:right;margin-top:10px;"><b id="preview-total">Разом до сплати: 0 грн</b></p>
+<p style="margin-top:30px;">Оплату прошу здійснити шляхом безготівкового перерахування коштів на рахунок ФОП.</p>
+<p style="margin-top:40px;">_____________________ / ФОП ФЕДЧУК С.С.</p>
 
 </div>
 </section>
 
 </main>
+
+<script>
+function updatePreview() {
+    // Постачальник
+    const supplier = `
+<b>Постачальник:</b><br>
+${document.getElementById('supplier-name').value}<br>
+ІПН: ${document.getElementById('supplier-inn').value}<br>
+IBAN: ${document.getElementById('supplier-iban').value}<br>
+Банк: ${document.getElementById('supplier-bank').value}, МФО: ${document.getElementById('supplier-mfo').value}<br>
+Система оподаткування: ${document.getElementById('supplier-tax').value}
+`;
+    document.getElementById('preview-supplier').innerHTML = supplier;
+
+    // Покупець
+    const customer = `
+<b>Покупець:</b><br>
+${document.getElementById('customer-name').value}<br>
+ІПН: ${document.getElementById('customer-inn').value}<br>
+Адреса: ${document.getElementById('customer-address').value}
+`;
+    document.getElementById('preview-customer').innerHTML = customer;
+
+    // Товари
+    const tbody = document.getElementById('preview-items');
+    tbody.innerHTML = '<tr><th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr>';
+
+    let total = 0;
+    const names = document.querySelectorAll('.item-name');
+    const units = document.querySelectorAll('.item-unit');
+    const qtys = document.querySelectorAll('.item-qty');
+    const prices = document.querySelectorAll('.item-price');
+
+    names.forEach((n,i)=>{
+        const sum = Number(qtys[i].value)*Number(prices[i].value);
+        total += sum;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td>
+                        <td>${n.value}</td>
+                        <td>${units[i].value}</td>
+                        <td>${qtys[i].value}</td>
+                        <td>${prices[i].value}</td>
+                        <td>${sum.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById('preview-total').innerHTML = `<b>Разом до сплати: ${total.toFixed(2)} грн</b>`;
+}
+
+function addRow() {
+    const tbody = document.getElementById('items-body');
+    const index = tbody.rows.length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${index}</td>
+<td><input class="item-name" value="Нова позиція"></td>
+<td><input class="item-unit" value="шт"></td>
+<td><input type="number" class="item-qty" value="1" min="0" step="1" oninput="updateTotals()"></td>
+<td><input type="number" class="item-price" value="0" min="0" step="0.01" oninput="updateTotals()"></td>
+<td class="item-total">0</td>
+<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>`;
+    tbody.appendChild(tr);
+    updatePreview();
+}
+
+function removeRow(btn) {
+    btn.closest('tr').remove();
+    updatePreview();
+}
+
+function updateTotals() { updatePreview(); }
+
+// Авто-оновлення
+document.querySelectorAll('input').forEach(input=>{
+    input.addEventListener('input', updatePreview);
+});
+
+updatePreview();
+</script>
 
 </body>
 </html>
