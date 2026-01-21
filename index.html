@@ -440,7 +440,7 @@
             #app {
                 flex-direction: column;
                 height: auto;
-                overflow: visible;
+                overflow-x: hidden;
             }
 
             .editor {
@@ -456,8 +456,9 @@
                 padding: 20px 0;
                 width: 100%;
                 height: auto;
-                overflow: visible;
-                display: block;
+                display: flex;
+                justify-content: center;
+                overflow: hidden;
                 background: #000;
             }
 
@@ -465,7 +466,8 @@
                 /* Scaling down to fit screen width */
                 transform: scale(var(--doc-scale, 1));
                 transform-origin: top center;
-                margin: 0 auto;
+                flex-shrink: 0;
+                margin: 0;
                 /* footprint correction based on scale */
                 margin-bottom: calc(-297mm * (1 - var(--doc-scale, 1)));
             }
