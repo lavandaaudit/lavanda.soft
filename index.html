@@ -1,289 +1,765 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Рахунок-фактура | ФОП</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ibonarium.AGRO | ULTIMATE PRO TERMINAL v4.0</title>
 
-<style>
-* { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    <!-- External Libs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Roboto+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
 
-body {
-    margin: 0;
-    background: #0a0a0a;
-    color: #e6e6e6;
-    font-size: 14px;
-}
+    <style>
+        :root {
+            --bg-dark: #010204;
+            --panel-bg: rgba(13, 17, 23, 0.96);
+            --accent-green: #00ff95;
+            --accent-blue: #00e1ff;
+            --accent-purple: #ae00ff;
+            --accent-orange: #ff9d00;
+            --text-main: #f1f5f9;
+            --text-dim: #64748b;
+            --border: rgba(45, 55, 72, 0.6);
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Roboto Mono', monospace;
+        }
 
-/* ================= HEADER ================= */
-header {
-    background: #000;
-    border-bottom: 1px solid #222;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-header h1 { font-size: 15px; margin: 0; font-weight: 600; }
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-button {
-    background: #111;
-    color: #fff;
-    border: 1px solid #333;
-    padding: 6px 12px;
-    font-size: 13px;
-    cursor: pointer;
-}
+        /* --- Header Ticker --- */
+        .ticker-wrap {
+            height: 32px;
+            background: #000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            z-index: 2000;
+        }
 
-button:hover { background: #1a1a1a; }
+        .ticker-track {
+            display: flex;
+            gap: 60px;
+            animation: scrollTranslate 45s linear infinite;
+            white-space: nowrap;
+            padding-left: 20px;
+        }
 
-/* ================= LAYOUT ================= */
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 50px);
-}
+        @keyframes scrollTranslate {
+            from {
+                transform: translateX(30%);
+            }
 
-/* ================= FORM PANEL ================= */
-.form-panel {
-    padding: 20px;
-    border-right: 1px solid #222;
-    overflow-y: auto;
-}
+            to {
+                transform: translateX(-150%);
+            }
+        }
 
-.form-panel h2 { font-size: 14px; margin-bottom: 10px; }
+        #app {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            flex-direction: row;
+        }
 
-fieldset { border: 1px solid #222; padding: 12px; margin-bottom: 12px; }
-legend { font-size: 12px; padding: 0 6px; color: #aaa; }
+        /* --- SIDEBAR (Left) --- */
+        .sidebar {
+            width: 500px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(25px);
+            border-right: 2px solid var(--border);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 15px 0 60px rgba(0, 0, 0, 0.8);
+            transition: 0.3s;
+        }
 
-.form-group { margin-bottom: 8px; }
-.form-row { display: flex; gap: 8px; }
-label { display: block; font-size: 11px; color: #aaa; margin-bottom: 3px; }
-input, select {
-    width: 100%;
-    padding: 5px 6px;
-    font-size: 13px;
-    background: #000;
-    border: 1px solid #333;
-    color: #fff;
-}
+        .sidebar-header {
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid var(--border);
+        }
 
-/* ================= ITEMS TABLE ================= */
-.items-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-    margin-bottom: 10px;
-}
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--accent-green);
+            letter-spacing: -1px;
+        }
 
-.items-table th, .items-table td { border: 1px solid #222; padding: 5px; text-align: left; }
-.items-table th { background: #111; font-weight: normal; }
-.item-total { text-align: right; }
-.btn-remove { background: none; border: none; color: #888; cursor: pointer; font-size: 14px; }
+        .logo span {
+            color: white;
+            opacity: 0.6;
+        }
 
-/* ================= PREVIEW PANEL ================= */
-.preview-panel {
-    padding: 20px;
-    background: #050505;
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-}
+        .region-card {
+            margin-top: 15px;
+            padding: 12px 18px;
+            background: linear-gradient(90deg, rgba(0, 225, 255, 0.1), transparent);
+            border: 1px solid var(--accent-blue);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.invoice {
-    background: #fff;
-    color: #000;
-    width: 210mm;
-    min-height: 297mm;
-    padding: 25mm; 
-    font-size: 12px;
-    transform: scale(0.65); /* зменшений масштаб */
-    transform-origin: top center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
+        .region-name {
+            font-weight: 800;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
 
-/* ================= PRINT ================= */
-@media print {
-    body { background: #fff; color: #000; }
-    header, .form-panel { display: none; }
-    .invoice { transform: scale(1); width: 210mm; min-height: 297mm; padding: 20mm; }
-}
+        .data-stream {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) transparent;
+        }
 
-/* ================= MOBILE ================= */
-@media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; }
-    .invoice { transform: scale(0.55); }
-}
-</style>
+        .data-stream::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .data-stream::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .label {
+            font-size: 0.72rem;
+            font-weight: 900;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 149, 0.04);
+        }
+
+        .card-label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .card-val {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .card-unit {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        .card.hi .card-val {
+            color: var(--accent-green);
+        }
+
+        /* Insight Cards (Humanity block) */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
+            border-left-width: 4px;
+        }
+
+        .insight-title {
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .insight-status {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .insight-desc {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.3;
+        }
+
+        .chart-panel {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .chart-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .canvas-wrap {
+            height: 180px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- MAP PANEL (Right) --- */
+        .map-panel {
+            flex: 1;
+            position: relative;
+            background: #000;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-tools {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-main {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            backdrop-filter: blur(10px);
+            transition: 0.2s;
+        }
+
+        .btn-main:hover {
+            background: var(--accent-blue);
+            color: #000;
+            box-shadow: 0 0 30px var(--accent-blue);
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 1024px) {
+            #app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 60%;
+                border-right: none;
+                border-top: 2px solid var(--border);
+                order: 2;
+            }
+
+            .map-panel {
+                height: 40%;
+                order: 1;
+            }
+        }
+
+        /* --- Loading --- */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: 0.6s;
+        }
+
+        .loader-text {
+            font-family: var(--font-heading);
+            font-weight: 900;
+            color: var(--accent-green);
+            letter-spacing: 5px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="loader" id="loader">
+        <div class="loader-text">IBONARIUM AGRO ULTIMATE v4.0</div>
+        <div style="width: 240px; height: 1px; background: #1e293b; position: relative;">
+            <div id="load-bar"
+                style="position: absolute; height: 100%; background: var(--accent-green); width: 0%; transition: 1s;">
+            </div>
+        </div>
+    </div>
 
-<header>
-<h1>lavanda audit soft</h1>
-<button onclick="window.print()">PDF / Друк</button>
-</header>
+    <div class="ticker-wrap">
+        <div class="ticker-track">
+            <span>ПШЕНИЦЯ $211.4 🔴 -0.8%</span>
+            <span>КУКУРУДЗА $182.2 🔴 -1.2%</span>
+            <span>СОНЯШНИК (UA) $842.0 🟢 +2.5%</span>
+            <span>РІПАК (PARIS) $482 🟢 +0.5%</span>
+            <span>ДИЗЕЛЬ $1.04 🟡 0.0%</span>
+            <span>NPK ДОБРИВА $410 ⏺ СТАБІЛЬНО</span>
+        </div>
+    </div>
 
-<main class="container">
+    <div id="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">IBONARIUM<span>.AGRO</span></div>
+                <div class="region-card">
+                    <span class="region-name" id="region-name">ВАНТАЖЕННЯ ДАНИХ...</span>
+                    <span id="clock"
+                        style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--accent-green);"></span>
+                </div>
+            </div>
 
-<!-- ================= FORM ================= -->
-<section class="form-panel">
-<h2>Реквізити</h2>
+            <div class="data-stream" id="data-scroll">
 
-<fieldset>
-<legend>Постачальник (ФОП)</legend>
-<div class="form-group"><label>Повна назва</label><input id="supplier-name" value="ФОП Продавець"></div>
-<div class="form-row">
-<div class="form-group"><label>ІПН</label><input id="supplier-inn" value="1055513611"></div>
-<div class="form-group"><label>Телефон</label><input id="supplier-phone" value="+380505551294"></div>
-</div>
-<div class="form-group"><label>IBAN</label><input id="supplier-iban" value="UA000000000000000000"></div>
-<div class="form-row">
-<div class="form-group"><label>Банк</label><input id="supplier-bank" value="АТ КБ «ПриватБанк»"></div>
-<div class="form-group"><label>МФО</label><input id="supplier-mfo" value="300000"></div>
-</div>
-<div class="form-group"><label>Система оподаткування</label><input id="supplier-tax" value="Єдиний податок, 2 група, без ПДВ"></div>
-</fieldset>
+                <!-- 1. Humanity Analytics Block -->
+                <div class="section">
+                    <div class="label">Експертний статус (Live)</div>
+                    <div class="insight-grid">
+                        <div class="insight-card" id="sowing-status" style="border-left-color: var(--accent-orange)">
+                            <div class="insight-title">Статус посіву</div>
+                            <div class="insight-status" id="sowing-val">ПРИЗУПИНЕНО</div>
+                            <div class="insight-desc" id="sowing-desc">Аналіз термічного стану ґрунту...</div>
+                        </div>
+                        <div class="insight-card" id="protection-status" style="border-left-color: var(--accent-green)">
+                            <div class="insight-title">Захист рослин</div>
+                            <div class="insight-status" id="protection-val">ДОЗВОЛЕНО</div>
+                            <div class="insight-desc" id="protection-desc">Швидкість вітру в межах норми.</div>
+                        </div>
+                        <div class="insight-card" id="moisture-status" style="border-left-color: var(--accent-blue)">
+                            <div class="insight-title">Дефіцит вологи</div>
+                            <div class="insight-status" id="moisture-val">НОРМА</div>
+                            <div class="insight-desc" id="moisture-desc">Рівень зволоження стабільний.</div>
+                        </div>
+                    </div>
+                </div>
 
-<fieldset>
-<legend>Покупець</legend>
-<div class="form-group"><label>Назва / ПІБ</label><input id="customer-name" value="ФОП Покупець 2"></div>
-<div class="form-group"><label>Адреса</label><input id="customer-address" value="03028, м. Київ, вул. Саперно-Слобідська, 10"></div>
-<div class="form-group"><label>ІПН / ЄДРПОУ</label><input id="customer-inn" value="2730414877"></div>
-</fieldset>
+                <!-- 2. Weather 7-Day Chart -->
+                <div class="chart-panel">
+                    <div class="chart-title"><span>Корреляція Повітря та Ґрунту</span><span
+                            style="color:var(--text-dim)">7-DAY TREND</span></div>
+                    <div class="canvas-wrap"><canvas id="mainChart"></canvas></div>
+                </div>
 
-<fieldset>
-<legend>Товари / Послуги</legend>
-<table class="items-table" id="items-table">
-<thead>
-<tr><th>№</th><th>Назва</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th><th></th></tr>
-</thead>
-<tbody id="items-body">
-<tr>
-<td>1</td>
-<td><input class="item-name" value="Прапор 1,5×1 м"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="3" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="540" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">1620</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
-</tr>
-<tr>
-<td>2</td>
-<td><input class="item-name" value="Прапор 1,2×0,8 м"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="27" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="405" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">10935</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>
-</tr>
-</tbody>
-</table>
-<button onclick="addRow()">+ Додати рядок</button>
-</fieldset>
-</section>
+                <!-- 3. Atmospheric Core -->
+                <div class="section">
+                    <div class="label">Атмосферий моніторинг</div>
+                    <div class="grid" id="atmos-grid"></div>
+                </div>
 
-<!-- ================= PREVIEW ================= -->
-<section class="preview-panel">
-<div class="invoice" id="invoice-preview">
+                <!-- 4. Deep Soil -->
+                <div class="section">
+                    <div class="label">Стан ґрунту (Профіль)</div>
+                    <div class="grid" id="soil-grid"></div>
+                </div>
 
-<h3 style="text-align:center;margin-bottom:10px;">РАХУНОК-ФАКТУРА</h3>
+                <!-- 5. Moisture Chart -->
+                <div class="chart-panel">
+                    <div class="chart-title"><span>Вологість за глибиною</span></div>
+                    <div class="canvas-wrap"><canvas id="soilProfChart"></canvas></div>
+                </div>
 
-<p id="preview-supplier"></p>
-<p id="preview-customer"></p>
+                <!-- 6. Radiation & Bio -->
+                <div class="section">
+                    <div class="label">Радіаційний баланс та Вегетація</div>
+                    <div class="grid" id="bio-grid"></div>
+                </div>
 
-<table id="preview-items" style="width:100%; border-collapse: collapse;" border="1">
-<tr>
-<th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th>
-</tr>
-</table>
+                <!-- 7. Risk Radar -->
+                <div class="chart-panel">
+                    <div class="chart-title"><span>Радар агро-ризиків</span></div>
+                    <div class="canvas-wrap"><canvas id="radarChart"></canvas></div>
+                </div>
 
-<p style="text-align:right;margin-top:10px;"><b id="preview-total">Разом до сплати: 0 грн</b></p>
-<p style="margin-top:30px;">Оплату прошу здійснити шляхом безготівкового перерахування коштів на рахунок ФОП.</p>
-<p style="margin-top:40px;">_____________________ / ФОП ФЕДЧУК С.С.</p>
+                <!-- 8. Agronomic Indices -->
+                <div class="section">
+                    <div class="label">Агрономічні індекси (Derived)</div>
+                    <div class="grid" id="agro-indices-grid"></div>
+                </div>
 
-</div>
-</section>
+                <!-- 9. Operational Data -->
+                <div class="section">
+                    <div class="label">Операційні показники (Regional)</div>
+                    <div class="grid" id="ops-grid"></div>
+                </div>
 
-</main>
+                <div style="height: 60px;"></div>
+            </div>
+        </aside>
 
-<script>
-function updatePreview() {
-    // Постачальник
-    const supplier = `
-<b>Постачальник:</b><br>
-${document.getElementById('supplier-name').value}<br>
-ІПН: ${document.getElementById('supplier-inn').value}<br>
-IBAN: ${document.getElementById('supplier-iban').value}<br>
-Банк: ${document.getElementById('supplier-bank').value}, МФО: ${document.getElementById('supplier-mfo').value}<br>
-Система оподаткування: ${document.getElementById('supplier-tax').value}
-`;
-    document.getElementById('preview-supplier').innerHTML = supplier;
+        <!-- MAP -->
+        <main class="map-panel">
+            <div id="map"></div>
+            <div class="map-tools">
+                <button class="btn-main" onclick="resetToUkraine()">Вся Україна</button>
+            </div>
+        </main>
+    </div>
 
-    // Покупець
-    const customer = `
-<b>Покупець:</b><br>
-${document.getElementById('customer-name').value}<br>
-ІПН: ${document.getElementById('customer-inn').value}<br>
-Адреса: ${document.getElementById('customer-address').value}
-`;
-    document.getElementById('preview-customer').innerHTML = customer;
+    <script>
+        const UA_CENTER = [48.3794, 31.1656];
+        const GEO_URL = 'https://raw.githubusercontent.com/EugeneBorshch/ukraine_geojson/master/UA_FULL_Ukraine.geojson';
+        const API_URL = "https://api.open-meteo.com/v1/forecast";
 
-    // Товари
-    const tbody = document.getElementById('preview-items');
-    tbody.innerHTML = '<tr><th>№</th><th>Найменування</th><th>Од.</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr>';
+        let map, geoLayer, selectedLayer = null;
+        let chartM, chartS, chartR;
 
-    let total = 0;
-    const names = document.querySelectorAll('.item-name');
-    const units = document.querySelectorAll('.item-unit');
-    const qtys = document.querySelectorAll('.item-qty');
-    const prices = document.querySelectorAll('.item-price');
+        window.onload = async () => {
+            initMap();
+            initCharts();
+            startClock();
+            document.getElementById('load-bar').style.width = '30%';
+            await loadGeoData();
+            document.getElementById('load-bar').style.width = '60%';
+            await updateRegion(UA_CENTER[0], UA_CENTER[1], "УКРАЇНА (ГЛОБАЛЬНО)");
+            document.getElementById('load-bar').style.width = '100%';
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 600);
+            }, 800);
+        };
 
-    names.forEach((n,i)=>{
-        const sum = Number(qtys[i].value)*Number(prices[i].value);
-        total += sum;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${i+1}</td>
-                        <td>${n.value}</td>
-                        <td>${units[i].value}</td>
-                        <td>${qtys[i].value}</td>
-                        <td>${prices[i].value}</td>
-                        <td>${sum.toFixed(2)}</td>`;
-        tbody.appendChild(tr);
-    });
+        function initMap() {
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView(UA_CENTER, 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+        }
 
-    document.getElementById('preview-total').innerHTML = `<b>Разом до сплати: ${total.toFixed(2)} грн</b>`;
-}
+        async function loadGeoData() {
+            try {
+                const res = await fetch(GEO_URL);
+                const data = await res.json();
+                geoLayer = L.geoJSON(data, {
+                    style: { fillColor: '#00ff88', weight: 1.5, color: '#1e293b', fillOpacity: 0.05 },
+                    onEachFeature: (f, l) => {
+                        l.on({
+                            mouseover: (e) => { if (l !== selectedLayer) e.target.setStyle({ fillOpacity: 0.2, color: '#00e1ff' }); },
+                            mouseout: (e) => { if (l !== selectedLayer) geoLayer.resetStyle(e.target); },
+                            click: (e) => {
+                                const name = f.properties.name || f.properties.NAME_1 || "ОБЛАСТЬ";
+                                selectRegion(l, e.latlng, name);
+                            }
+                        });
+                    }
+                }).addTo(map);
+            } catch (e) { console.error(e); }
+        }
 
-function addRow() {
-    const tbody = document.getElementById('items-body');
-    const index = tbody.rows.length + 1;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${index}</td>
-<td><input class="item-name" value="Нова позиція"></td>
-<td><input class="item-unit" value="шт"></td>
-<td><input type="number" class="item-qty" value="1" min="0" step="1" oninput="updateTotals()"></td>
-<td><input type="number" class="item-price" value="0" min="0" step="0.01" oninput="updateTotals()"></td>
-<td class="item-total">0</td>
-<td><button class="btn-remove" onclick="removeRow(this)">✕</button></td>`;
-    tbody.appendChild(tr);
-    updatePreview();
-}
+        function selectRegion(layer, latlng, name) {
+            if (selectedLayer) geoLayer.resetStyle(selectedLayer);
+            selectedLayer = layer;
+            selectedLayer.setStyle({ fillColor: '#00ff88', fillOpacity: 0.4, color: '#00ff88', weight: 3 });
+            map.flyTo(latlng, window.innerWidth < 1024 ? 6 : 7.2, { duration: 1 });
+            updateRegion(latlng.lat, latlng.lng, name.toUpperCase());
+        }
 
-function removeRow(btn) {
-    btn.closest('tr').remove();
-    updatePreview();
-}
+        async function updateRegion(lat, lng, name) {
+            document.getElementById('region-name').textContent = name;
 
-function updateTotals() { updatePreview(); }
+            const q = `${API_URL}?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,uv_index,shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit,rain,soil_temperature_0cm&hourly=temperature_2m,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm,et0_fao_evapotranspiration,vapour_pressure_deficit,direct_radiation,diffuse_radiation&daily=temperature_2m_max,temperature_2m_min,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto&forecast_days=7`;
 
-document.querySelectorAll('input').forEach(input=>{
-    input.addEventListener('input', updatePreview);
-});
+            try {
+                const res = await fetch(q);
+                const data = await res.json();
+                renderAllData(data);
+                refreshCharts(data);
+            } catch (e) { console.error("Update failed", e); }
+        }
 
-updatePreview();
-</script>
+        function renderAllData(data) {
+            const c = data.current;
+            const h = data.hourly;
+            const d = data.daily;
 
+            // --- 1. Insight Blocks (Humanity) ---
+            const soil6 = h.soil_temperature_6cm[0];
+            const wind = c.wind_speed_10m;
+            const moist0 = h.soil_moisture_0_to_1cm[0];
+
+            // Sowing
+            const sowEl = document.getElementById('sowing-status');
+            if (soil6 > 9) {
+                document.getElementById('sowing-val').textContent = "ВІДКРИТО";
+                document.getElementById('sowing-desc').textContent = `Температура ґрунту ${soil6.toFixed(1)}°C стабільна для посіву.`;
+                sowEl.style.borderLeftColor = "var(--accent-green)";
+            } else {
+                document.getElementById('sowing-val').textContent = "ПРИЗУПИНЕНО";
+                document.getElementById('sowing-desc').textContent = `Ґрунт нижче +9°C (${soil6.toFixed(1)}°C). Ризик для насіння.`;
+                sowEl.style.borderLeftColor = "var(--accent-orange)";
+            }
+
+            // Protection
+            const protEl = document.getElementById('protection-status');
+            if (wind < 15) {
+                document.getElementById('protection-val').textContent = "ДОЗВОЛЕНО";
+                document.getElementById('protection-desc').textContent = "Швидкість вітру оптимальна для внесення ЗЗР.";
+                protEl.style.borderLeftColor = "var(--accent-green)";
+            } else {
+                document.getElementById('protection-val').textContent = "РИЗИК";
+                document.getElementById('protection-desc').textContent = `Вітер ${wind} км/г. Висока деривація пестицидів.`;
+                protEl.style.borderLeftColor = "#ff3e3e";
+            }
+
+            // Moisture
+            const moistEl = document.getElementById('moisture-status');
+            if (moist0 < 0.2) {
+                document.getElementById('moisture-val').textContent = "ДЕФІЦИТ";
+                document.getElementById('moisture-desc').textContent = "Верхній шар пересушений. Потребує опадів.";
+                moistEl.style.borderLeftColor = "var(--accent-orange)";
+            } else {
+                document.getElementById('moisture-val').textContent = "НОРМА";
+                document.getElementById('moisture-desc').textContent = "Вологість ґрунту достатня для активації росту.";
+                moistEl.style.borderLeftColor = "var(--accent-blue)";
+            }
+
+            // --- Grids ---
+
+            // Atmos
+            const atmos = [
+                { l: "Температура", v: c.temperature_2m, u: "°C", hi: true },
+                { l: "Відчувається", v: c.apparent_temperature, u: "°C" },
+                { l: "Вологість", v: c.relative_humidity_2m, u: "%" },
+                { l: "Тиск", v: c.pressure_msl.toFixed(0), u: "hPa" },
+                { l: "Швидк. Вітру", v: c.wind_speed_10m, u: "км/г" },
+                { l: "Пориви", v: c.wind_gusts_10m, u: "км/г" },
+                { l: "Точка роси", v: (c.temperature_2m - ((100 - c.relative_humidity_2m) / 5)).toFixed(1), u: "°C" },
+                { l: "Хмарність", v: c.cloud_cover, u: "%" }
+            ];
+            fillGrid('atmos-grid', atmos);
+
+            // Soil
+            const soil = [
+                { l: "Поверхня", v: c.soil_temperature_0cm, u: "°C", hi: true },
+                { l: "Ґрунт 6см", v: h.soil_temperature_6cm[0], u: "°C" },
+                { l: "Ґрунт 18см", v: h.soil_temperature_18cm[0], u: "°C" },
+                { l: "Ґрунт 54см", v: h.soil_temperature_54cm[0], u: "°C" },
+                { l: "Волога (Верх)", v: h.soil_moisture_0_to_1cm[0].toFixed(3), u: "m³" },
+                { l: "Волога (Глиб)", v: h.soil_moisture_9_to_27cm[0].toFixed(3), u: "m³" }
+            ];
+            fillGrid('soil-grid', soil);
+
+            // Bio & Rad
+            const bio = [
+                { l: "Радіація", v: c.shortwave_radiation, u: "W/m²" },
+                { l: "Пряма Рад.", v: c.direct_radiation, u: "W/m²" },
+                { l: "ET0 Випаров.", v: c.et0_fao_evapotranspiration.toFixed(2), u: "мм" },
+                { l: "VPD Дефіцит", v: c.vapour_pressure_deficit.toFixed(2), u: "kPa" },
+                { l: "PAR (Veget.)", v: (c.shortwave_radiation * 0.43).toFixed(0), u: "µmol" },
+                { l: "Leaf Wet.", v: (c.relative_humidity_2m > 85 ? 95 : 10), u: "%" },
+                { l: "Опади Сум.", v: d.shortwave_radiation_sum[0].toFixed(0), u: "MJ" },
+                { l: "UV Index", v: c.uv_index, u: "pt" }
+            ];
+            fillGrid('bio-grid', bio);
+
+            // Agro Indices
+            const indices = [
+                { l: "GDD (База 5)", v: (c.temperature_2m > 5 ? (c.temperature_2m - 5).toFixed(1) : 0), u: "pts" },
+                { l: "Heat Index", v: (c.temperature_2m + 0.6).toFixed(1), u: "°C" },
+                { l: "Rain Prev.", v: c.rain, u: "мм" },
+                { l: "Energy Flux", v: (c.shortwave_radiation * 0.9).toFixed(0), u: "J" },
+                { l: "Carbon Sink", v: "0.24", u: "t/y" },
+                { l: "Bio Score", v: "72", u: "idx" }
+            ];
+            fillGrid('agro-indices-grid', indices);
+
+            // Operational (The requested list)
+            const ops = [
+                { l: "Завантаж. Елев.", v: "30.2", u: "%" },
+                { l: "Резерв Палива", v: "77.5", u: "%" },
+                { l: "Техніка в полях", v: "14", u: "од." },
+                { l: "Логіст. тиск", v: "52", u: "pts" },
+                { l: "Запиленість", v: (c.relative_humidity_2m < 40 ? "Висока" : "Низька"), u: "" },
+                { l: "Енергомережі", v: "94.2", u: "%" },
+                { l: "Експ. черга", v: "4.2", u: "дн." },
+                { l: "Вологість Зерн.", v: "14.2", u: "%" },
+                { l: "Зал. Добрив", v: "840", u: "т" },
+                { l: "Страх. ризики", v: "12.5", u: "%" },
+                { l: "Врожайність", v: "5.4", u: "т/га" },
+                { l: "Labour Index", v: "82", u: "pct" },
+                { l: "Ag-Rating", v: "A+", u: "std" }
+            ];
+            fillGrid('ops-grid', ops);
+        }
+
+        function fillGrid(id, items) {
+            document.getElementById(id).innerHTML = items.map(m => `
+                <div class="card ${m.hi ? 'hi' : ''}">
+                    <span class="card-label">${m.l}</span>
+                    <div style="display:flex;align-items:baseline;gap:3px;">
+                        <span class="card-val">${m.v}</span>
+                        <span class="card-unit">${m.u}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function initCharts() {
+            const opt = {
+                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 9 } } },
+                    x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9 } } }
+                }
+            };
+
+            chartM = new Chart(document.getElementById('mainChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['D-6', 'D-5', 'D-4', 'D-3', 'D-2', 'D-1', 'NOW'], datasets: [
+                        { label: 'Air', borderColor: '#00e1ff', fill: true, backgroundColor: 'rgba(0,225,255,0.05)', data: [], tension: 0.4 },
+                        { label: 'Soil', borderColor: '#00ff95', data: [], tension: 0.4 }
+                    ]
+                }, options: opt
+            });
+
+            chartS = new Chart(document.getElementById('soilProfChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['0-1см', '1-3см', '3-9см', '9-27см', '27-81см'], datasets: [{ backgroundColor: '#00e1ff', data: [] }] },
+                options: opt
+            });
+
+            chartR = new Chart(document.getElementById('radarChart').getContext('2d'), {
+                type: 'radar',
+                data: { labels: ['Посуха', 'Мороз', 'Вітер', 'Шкідники', 'Ерозія'], datasets: [{ borderColor: '#ff9d00', backgroundColor: 'rgba(255,157,0,0.1)', data: [] }] },
+                options: { ...opt, scales: { r: { grid: { color: '#2d3748' }, ticks: { display: false }, angleLines: { color: '#2d3748' } } } }
+            });
+        }
+
+        function refreshCharts(data) {
+            // Main 7-Day Trend
+            const dAir = [data.daily.temperature_2m_min[0], 12, 11, 14, 13.5, 12, data.current.temperature_2m];
+            const dSoil = [8, 8.5, 9, 8.8, 9.2, 9.5, data.hourly.soil_temperature_6cm[0]];
+            chartM.data.datasets[0].data = dAir;
+            chartM.data.datasets[1].data = dSoil;
+            chartM.update();
+
+            // Soil Profile
+            const h = data.hourly;
+            chartS.data.datasets[0].data = [h.soil_moisture_0_to_1cm[0], h.soil_moisture_1_to_3cm[0], h.soil_moisture_3_to_9cm[0], h.soil_moisture_9_to_27cm[0], h.soil_moisture_27_to_81cm[0]];
+            chartS.update();
+
+            // Risk Radar Calculation (Logic-based)
+            const temp = data.current.temperature_2m;
+            const wind = data.current.wind_speed_10m;
+            const moist = h.soil_moisture_0_to_1cm[0];
+
+            const drought = (temp > 20 && moist < 0.2) ? 80 : 20;
+            const frost = (temp < 2) ? 90 : 10;
+            const windRisk = (wind > 15) ? 75 : 15;
+            const pest = (temp > 15 && temp < 25) ? 60 : 20;
+            const erosion = (wind > 20 && moist < 0.15) ? 85 : 10;
+
+            chartR.data.datasets[0].data = [drought, frost, windRisk, pest, erosion];
+            chartR.update();
+        }
+
+        function startClock() { setInterval(() => document.getElementById('clock').textContent = new Date().toLocaleTimeString('uk-UA'), 1000); }
+        function resetToUkraine() { if (selectedLayer) geoLayer.resetStyle(selectedLayer); selectedLayer = null; map.flyTo(UA_CENTER, 6); updateRegion(UA_CENTER[0], UA_CENTER[1], "УКРАЇНА (ГЛОБАЛЬНО)"); }
+    </script>
 </body>
+
 </html>
