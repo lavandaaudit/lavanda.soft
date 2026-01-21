@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAVANDA AUDIT | Finance Terminal</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Roboto+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -24,7 +27,12 @@
             --font-mono: 'Roboto Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: var(--bg-dark);
             color: var(--text-main);
@@ -55,7 +63,11 @@
             letter-spacing: -1px;
             text-transform: uppercase;
         }
-        .logo span { color: white; opacity: 0.6; }
+
+        .logo span {
+            color: white;
+            opacity: 0.6;
+        }
 
         .type-selector {
             display: flex;
@@ -65,6 +77,7 @@
             padding: 4px;
             gap: 4px;
         }
+
         .type-btn {
             background: transparent;
             color: var(--text-dim);
@@ -78,6 +91,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .type-btn.active {
             background: var(--accent-blue);
             color: #000;
@@ -115,10 +129,20 @@
             scrollbar-width: thin;
             scrollbar-color: var(--accent-blue) transparent;
         }
-        .editor::-webkit-scrollbar { width: 4px; }
-        .editor::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 10px; }
 
-        .form-section { margin-bottom: 30px; }
+        .editor::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .editor::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
         .section-label {
             font-size: 0.75rem;
             font-weight: 900;
@@ -130,14 +154,39 @@
             align-items: center;
             gap: 10px;
         }
-        .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        .input-group { margin-bottom: 15px; }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        label { display: block; font-size: 0.65rem; text-transform: uppercase; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
-        input, textarea, select {
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        input,
+        textarea,
+        select {
             width: 100%;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
             padding: 10px 14px;
             color: white;
@@ -146,7 +195,11 @@
             font-size: 0.9rem;
             outline: none;
         }
-        input:focus { border-color: var(--accent-blue); background: rgba(0, 225, 255, 0.03); }
+
+        input:focus {
+            border-color: var(--accent-blue);
+            background: rgba(0, 225, 255, 0.03);
+        }
 
         /* Items List */
         .items-list-header {
@@ -159,6 +212,7 @@
             text-transform: uppercase;
             padding-left: 5px;
         }
+
         .item-row {
             display: grid;
             grid-template-columns: 1fr 60px 80px 100px 30px;
@@ -166,6 +220,7 @@
             margin-bottom: 10px;
             align-items: center;
         }
+
         .btn-add {
             background: transparent;
             border: 1px solid var(--accent-blue);
@@ -177,6 +232,7 @@
             font-weight: 700;
             text-transform: uppercase;
         }
+
         .btn-del {
             background: transparent;
             border: none;
@@ -202,7 +258,7 @@
             width: 210mm;
             min-height: 297mm;
             padding: 20mm;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
             font-size: 11pt;
             line-height: 1.4;
             display: flex;
@@ -217,8 +273,16 @@
             justify-content: space-between;
             align-items: flex-end;
         }
-        .doc-title { font-size: 24pt; font-weight: 800; text-transform: uppercase; }
-        .doc-meta { text-align: right; }
+
+        .doc-title {
+            font-size: 24pt;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .doc-meta {
+            text-align: right;
+        }
 
         .details-grid {
             display: grid;
@@ -226,28 +290,74 @@
             gap: 40px;
             margin-bottom: 30px;
         }
-        .entity-block h4 { text-transform: uppercase; border-bottom: 1px solid #ddd; margin-bottom: 8px; font-size: 9pt; color: #555; }
-        .entity-data { font-size: 10pt; }
+
+        .entity-block h4 {
+            text-transform: uppercase;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 8px;
+            font-size: 9pt;
+            color: #555;
+        }
+
+        .entity-data {
+            font-size: 10pt;
+        }
 
         .sheet-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        .sheet-table th { background: #f0f0f0; border: 1px solid #000; padding: 10px; font-size: 9pt; text-transform: uppercase; text-align: left; }
-        .sheet-table td { border: 1px solid #000; padding: 10px; font-size: 10pt; }
-        .sheet-table .num { text-align: center; }
-        .sheet-table .val { text-align: right; }
+
+        .sheet-table th {
+            background: #f0f0f0;
+            border: 1px solid #000;
+            padding: 10px;
+            font-size: 9pt;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .sheet-table td {
+            border: 1px solid #000;
+            padding: 10px;
+            font-size: 10pt;
+        }
+
+        .sheet-table .num {
+            text-align: center;
+        }
+
+        .sheet-table .val {
+            text-align: right;
+        }
 
         .total-block {
             margin-left: auto;
             width: 300px;
             margin-bottom: 40px;
         }
-        .total-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
-        .total-row.main { border-bottom: 2px solid #000; font-weight: 900; font-size: 14pt; }
 
-        .total-text { font-style: italic; font-size: 10pt; margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .total-row.main {
+            border-bottom: 2px solid #000;
+            font-weight: 900;
+            font-size: 14pt;
+        }
+
+        .total-text {
+            font-style: italic;
+            font-size: 10pt;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
 
         .signature-block {
             display: grid;
@@ -255,23 +365,135 @@
             gap: 100px;
             margin-top: auto;
         }
-        .sig-line { border-bottom: 1px solid #000; height: 40px; margin-bottom: 5px; position: relative; }
-        .sig-label { font-size: 8pt; color: #555; }
+
+        .sig-line {
+            border-bottom: 1px solid #000;
+            height: 40px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .sig-label {
+            font-size: 8pt;
+            color: #555;
+        }
 
         /* Print Override */
         @media print {
-            body { background: #fff !important; }
-            header, .editor { display: none !important; }
-            .preview { padding: 0 !important; overflow: visible !important; display: block !important; }
-            .sheet { box-shadow: none !important; margin: 0 !important; width: 100% !important; transform: none !important; }
+            body {
+                background: #fff !important;
+            }
+
+            header,
+            .editor {
+                display: none !important;
+            }
+
+            .preview {
+                padding: 0 !important;
+                overflow: visible !important;
+                display: block !important;
+            }
+
+            .sheet {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 100% !important;
+                transform: none !important;
+            }
+        }
+
+        /* Mobile Adaptation */
+        @media (max-width: 1024px) {
+            header {
+                height: auto;
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .type-selector {
+                width: 100%;
+            }
+
+            .type-btn {
+                flex: 1;
+                padding: 10px 5px;
+                font-size: 0.75rem;
+            }
+
+            .btn-print {
+                width: 100%;
+            }
+
+            #app {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .editor {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid var(--border);
+                overflow-y: visible;
+                padding: 20px;
+            }
+
+            .preview {
+                padding: 20px 5px;
+                min-height: 600px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-x: hidden;
+            }
+
+            .sheet {
+                /* Scaling down to fit screen width while preserving A4 layout */
+                transform: scale(var(--doc-scale, 0.45));
+                transform-origin: top center;
+                margin-bottom: -400px;
+                /* Offset for scaled height to prevent gap */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .items-list-header {
+                display: none;
+            }
+
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 12px;
+                border-radius: 10px;
+                position: relative;
+            }
+
+            .btn-del {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header>
         <div class="logo">LAVANDA<span>.AUDIT</span></div>
-        
+
         <div class="type-selector">
             <button class="type-btn active" onclick="setDocType('рахунок', this)">Рахунок</button>
             <button class="type-btn" onclick="setDocType('видаткова', this)">Видаткова</button>
@@ -284,7 +506,7 @@
     <main id="app">
         <!-- Editor Panel -->
         <aside class="editor">
-            
+
             <div class="form-section">
                 <div class="section-label">Метадані Документа</div>
                 <div class="input-row">
@@ -375,7 +597,7 @@
         <!-- Preview Panel -->
         <main class="preview">
             <div class="sheet" id="print-area">
-                
+
                 <div class="sheet-header">
                     <div class="doc-title" id="pre-doc-title">РАХУНОК</div>
                     <div class="doc-meta">
@@ -469,16 +691,32 @@
             document.getElementById('doc-date').value = today;
             renderItems();
             liveSync();
+            handleResize();
         };
+
+        window.addEventListener('resize', handleResize);
+
+        function handleResize() {
+            if (window.innerWidth <= 1024) {
+                const sheet = document.getElementById('print-area');
+                const preview = document.querySelector('.preview');
+                const availableWidth = preview.offsetWidth - 10;
+                const sheetWidth = 794; // 210mm at 96dpi (approx)
+                const scale = availableWidth / sheetWidth;
+                document.documentElement.style.setProperty('--doc-scale', Math.min(scale, 1));
+            } else {
+                document.documentElement.style.setProperty('--doc-scale', '1');
+            }
+        }
 
         function setDocType(type, btn) {
             currentType = type;
             document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             // Toggle banking details for Act/Invoice
             const bankField = document.getElementById('bank-field');
-            if(type === 'акт') {
+            if (type === 'акт') {
                 bankField.style.display = 'none';
             } else {
                 bankField.style.display = 'block';
@@ -569,16 +807,18 @@
         }
 
         function formatDate(d) {
-            if(!d) return "...";
+            if (!d) return "...";
             const parts = d.split('-');
             return `${parts[2]}.${parts[1]}.${parts[0]} р.`;
         }
 
         function numberInWords(n) {
+            // Simplified currency logic for UA
             const grn = Math.floor(n);
             const kop = Math.round((n - grn) * 100);
-            return `${grn} грн. ${kop < 10 ? '0'+kop : kop} коп.`;
+            return `${grn} грн. ${kop < 10 ? '0' + kop : kop} коп.`;
         }
     </script>
 </body>
+
 </html>
