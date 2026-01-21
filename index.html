@@ -405,6 +405,11 @@
 
         /* Mobile Adaptation */
         @media (max-width: 1024px) {
+            body {
+                overflow-y: auto !important;
+                height: auto;
+            }
+
             header {
                 height: auto;
                 flex-direction: column;
@@ -422,17 +427,20 @@
 
             .type-btn {
                 flex: 1;
-                padding: 10px 5px;
-                font-size: 0.75rem;
+                padding: 12px 5px;
+                font-size: 0.8rem;
             }
 
             .btn-print {
                 width: 100%;
+                padding: 15px;
+                font-size: 1rem;
             }
 
             #app {
                 flex-direction: column;
-                overflow-y: auto;
+                height: auto;
+                overflow: visible;
             }
 
             .editor {
@@ -440,25 +448,26 @@
                 height: auto;
                 border-right: none;
                 border-bottom: 2px solid var(--border);
-                overflow-y: visible;
+                overflow: visible;
                 padding: 20px;
             }
 
             .preview {
-                padding: 20px 5px;
-                min-height: 600px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                overflow-x: hidden;
+                padding: 20px 0;
+                width: 100%;
+                height: auto;
+                overflow: visible;
+                display: block;
+                background: #000;
             }
 
             .sheet {
-                /* Scaling down to fit screen width while preserving A4 layout */
-                transform: scale(var(--doc-scale, 0.45));
+                /* Scaling down to fit screen width */
+                transform: scale(var(--doc-scale, 1));
                 transform-origin: top center;
-                margin-bottom: -400px;
-                /* Offset for scaled height to prevent gap */
+                margin: 0 auto;
+                /* footprint correction based on scale */
+                margin-bottom: calc(-297mm * (1 - var(--doc-scale, 1)));
             }
         }
 
