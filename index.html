@@ -98,6 +98,12 @@
             box-shadow: 0 0 15px rgba(0, 225, 255, 0.3);
         }
 
+        .profile-btn.active {
+            background: var(--accent-orange) !important;
+            color: #000 !important;
+            box-shadow: 0 0 15px rgba(255, 157, 0, 0.3) !important;
+        }
+
         .btn-print {
             background: var(--accent-green);
             color: #000;
@@ -505,10 +511,16 @@
     <header>
         <div class="logo">LAVANDA<span>.AUDIT</span></div>
 
+        <div class="type-selector" style="border-color: var(--accent-orange);">
+            <button class="type-btn profile-btn active" onclick="setProfile('fop', this)">ФОП</button>
+            <button class="type-btn profile-btn" onclick="setProfile('tov', this)">ТОВ</button>
+            <button class="type-btn profile-btn" onclick="setProfile('tov_vat', this)">ТОВ з ПДВ</button>
+        </div>
+
         <div class="type-selector">
-            <button class="type-btn active" onclick="setDocType('рахунок', this)">Рахунок</button>
-            <button class="type-btn" onclick="setDocType('видаткова', this)">Видаткова</button>
-            <button class="type-btn" onclick="setDocType('акт', this)">Акт</button>
+            <button class="type-btn doctype-btn active" onclick="setDocType('рахунок', this)">Рахунок</button>
+            <button class="type-btn doctype-btn" onclick="setDocType('видаткова', this)">Видаткова</button>
+            <button class="type-btn doctype-btn" onclick="setDocType('акт', this)">Акт</button>
         </div>
 
         <button class="btn-print" onclick="window.print()">Зберегти PDF</button>
@@ -659,9 +671,9 @@
                         <span>Разом:</span>
                         <span id="pre-total-no-tax">0.00</span>
                     </div>
-                    <div class="total-row">
-                        <span>ПДВ (0%):</span>
-                        <span>0.00</span>
+                    <div class="total-row" id="vat-row">
+                        <span id="vat-label">ПДВ (0%):</span>
+                        <span id="pre-vat-amount">0.00</span>
                     </div>
                     <div class="total-row main">
                         <span>ВСЬОГО:</span>
@@ -692,9 +704,34 @@
 
     <script>
         let currentType = 'рахунок';
+        let currentVat = 0;
         let items = [
             { name: 'Аудиторські послуги (Етап 1)', unit: 'пос.', qty: 1, price: 15000 }
         ];
+
+        const profiles = {
+            'fop': {
+                name: 'ФОП ЛАВАНДА АУДИТ',
+                inn: '1234567890',
+                bank: 'UA000000000000000000000000000',
+                tax: 'Єдиний податок, 3 група',
+                vat: 0
+            },
+            'tov': {
+                name: 'ТОВ ЛАВАНДА АУДИТ',
+                inn: '44005511',
+                bank: 'UA110000000000000000000000001',
+                tax: 'Загальна система (без ПДВ)',
+                vat: 0
+            },
+            'tov_vat': {
+                name: 'ТОВ ЛАВАНДА АУДИТ',
+                inn: '44005511',
+                bank: 'UA220000000000000000000000002',
+                tax: 'Платник ПДВ 20%',
+                vat: 20
+            }
+        };
 
         // --- Init ---
         window.onload = () => {
@@ -704,6 +741,8 @@
             liveSync();
             handleResize();
         };
+
+
 
         window.addEventListener('resize', handleResize);
 
@@ -722,7 +761,7 @@
 
         function setDocType(type, btn) {
             currentType = type;
-            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.doctype-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // Toggle banking details for Act/Invoice
@@ -732,6 +771,24 @@
             } else {
                 bankField.style.display = 'block';
             }
+
+            liveSync();
+        }
+
+        function setProfile(profileKey, btn) {
+            const profile = profiles[profileKey];
+            if (!profile) return;
+
+            document.querySelectorAll('.profile-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.getElementById('sup-name').value = profile.name;
+            document.getElementById('sup-inn').value = profile.inn;
+            document.getElementById('sup-bank').value = profile.bank;
+            document.getElementById('sup-tax').value = profile.tax;
+            document.getElementById('sig-sup').value = profile.name;
+
+            currentVat = profile.vat;
 
             liveSync();
         }
@@ -808,9 +865,14 @@
             });
 
             // Totals
+            const vatAmount = total * (currentVat / 100);
+            const finalTotal = total + vatAmount;
+
             document.getElementById('pre-total-no-tax').textContent = total.toFixed(2);
-            document.getElementById('pre-total-final').textContent = total.toFixed(2) + " грн";
-            document.getElementById('pre-total-text').textContent = `Всього до сплати: ${numberInWords(total)}`;
+            document.getElementById('vat-label').textContent = `ПДВ (${currentVat}%):`;
+            document.getElementById('pre-vat-amount').textContent = vatAmount.toFixed(2);
+            document.getElementById('pre-total-final').textContent = finalTotal.toFixed(2) + " грн";
+            document.getElementById('pre-total-text').textContent = `Всього до сплати: ${numberInWords(finalTotal)}`;
 
             // Signatures
             document.getElementById('pre-sig-sup').textContent = document.getElementById('sig-sup').value;
